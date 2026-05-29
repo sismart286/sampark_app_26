@@ -1,0 +1,12 @@
+import 'package:flutter/material.dart';
+
+myTabBar(TabController tabController, BuildContext context) {
+  return TabBar(
+    controller: tabController,
+    indicatorWeight: 4,
+    indicatorSize: TabBarIndicatorSize.label,
+    labelStyle: Theme.of(context).textTheme.bodyLarge,
+    unselectedLabelStyle: Theme.of(context).textTheme.labelLarge,
+    tabs: [Text("Chats"), Text("Groups"), Text("Calls")],
+  );
+}
