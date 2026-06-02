@@ -5,6 +5,7 @@ import 'package:sampark_app_26/Config/Images.dart';
 import 'package:sampark_app_26/Config/Strings.dart';
 import 'package:sampark_app_26/Pages/Auth/AuthPage.dart';
 import 'package:sampark_app_26/Pages/CallHistory/CallHistory.dart';
+import 'package:sampark_app_26/Pages/ContactPage/ContactPage.dart';
 import 'package:sampark_app_26/Pages/Groups/GroupPage.dart';
 import 'package:sampark_app_26/Pages/Home/Widgets/ChatList.dart';
 import 'package:sampark_app_26/Pages/Home/Widgets/TabBar.dart';
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           IconButton(
             onPressed: () {
               //TODO: appController.checkLatestVersion();
-              Get.to(() => AuthPage());
+              Get.to(() => CaontactPage());
             },
             icon: Icon(Icons.search),
           ),
