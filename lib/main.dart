@@ -1,9 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sampark_app_26/Config/Themes.dart';
-import 'package:sampark_app_26/Pages/Home/HomePage.dart';
+import 'package:sampark_app_26/Pages/SplashPage/SplashPage.dart';
+import 'package:sampark_app_26/firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -19,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: ThemeMode.dark,
-      home: HomePage(),
+      home: const SplashPage(),
     );
   }
 }
