@@ -16,7 +16,7 @@ class PrimaryButton extends StatelessWidget {
     return InkWell(
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
-      onTap: () {},
+      onTap: ontap,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
         decoration: BoxDecoration(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:sampark_app_26/Controllers/AuthController.dart';
 import 'package:sampark_app_26/Widgets/PrimaryButton.dart';
 
 class LoginForm extends StatelessWidget {
@@ -8,6 +10,7 @@ class LoginForm extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController email = TextEditingController();
     TextEditingController password = TextEditingController();
+    AuthController authController = Get.put(AuthController());
     return Column(
       children: [
         SizedBox(height: 40),
@@ -27,15 +30,22 @@ class LoginForm extends StatelessWidget {
           ),
         ),
         SizedBox(height: 30),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            PrimaryButton(
-              ontap: () {},
-              btnName: "LOGIN",
-              icon: Icons.lock_open_outlined,
-            ),
-          ],
+
+        Obx(
+          () => authController.isLoading.value
+              ? CircularProgressIndicator()
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    PrimaryButton(
+                      ontap: () {
+                        authController.login(email.text, password.text);
+                      },
+                      btnName: "LOGIN",
+                      icon: Icons.lock_open_outlined,
+                    ),
+                  ],
+                ),
         ),
       ],
     );

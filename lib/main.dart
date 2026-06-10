@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sampark_app_26/Config/PagePath.dart';
 import 'package:sampark_app_26/Config/Themes.dart';
 import 'package:sampark_app_26/Pages/SplashPage/SplashPage.dart';
 import 'package:sampark_app_26/firebase_options.dart';
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Sampark',
       theme: lightTheme,
+      getPages: pagePath,
       darkTheme: darkTheme,
       themeMode: ThemeMode.dark,
       home: const SplashPage(),
