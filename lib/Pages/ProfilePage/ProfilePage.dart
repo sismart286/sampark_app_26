@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:sampark_app_26/Controllers/AuthController.dart';
 import 'package:sampark_app_26/Widgets/PrimaryButton.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -19,10 +21,20 @@ class ProfilePage extends StatelessWidget {
       text:
           "I am Suman Singha. App Developer. Job: Flutter Frontend Developer.",
     ); //TODO: text: profileController.currentUser.value.about
+
+    AuthController authController = Get.put(AuthController());
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Profile"),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.logout))],
+        actions: [
+          IconButton(
+            onPressed: () {
+              authController.logoutUser();
+            },
+            icon: Icon(Icons.logout),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),

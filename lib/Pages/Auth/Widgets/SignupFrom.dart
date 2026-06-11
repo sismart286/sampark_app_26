@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:sampark_app_26/Controllers/AuthController.dart';
 import 'package:sampark_app_26/Widgets/PrimaryButton.dart';
 
 class SignupForm extends StatelessWidget {
@@ -6,6 +8,8 @@ class SignupForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AuthController authController = Get.put(AuthController());
+
     TextEditingController name = TextEditingController();
     TextEditingController email = TextEditingController();
     TextEditingController password = TextEditingController();
@@ -36,15 +40,25 @@ class SignupForm extends StatelessWidget {
           ),
         ),
         SizedBox(height: 30),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            PrimaryButton(
-              ontap: () {},
-              btnName: "SIGNUP",
-              icon: Icons.lock_open_outlined,
-            ),
-          ],
+        Obx(
+          () => authController.isLoading.value
+              ? CircularProgressIndicator()
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    PrimaryButton(
+                      ontap: () {
+                        authController.createUser(
+                          email.text,
+                          password.text,
+                          name.text,
+                        );
+                      },
+                      btnName: "SIGNUP",
+                      icon: Icons.lock_open_outlined,
+                    ),
+                  ],
+                ),
         ),
       ],
     );

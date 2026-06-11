@@ -35,6 +35,7 @@ class AuthController extends GetxController {
         email: email,
         password: password,
       );
+      await initUser(email, name);
       log("Account Created :) :)");
       Get.offAllNamed("/homePage");
     } on FirebaseAuthException catch (e) {
@@ -47,6 +48,11 @@ class AuthController extends GetxController {
       log("Signup error: $e");
     }
     isLoading.value = false;
+  }
+
+  Future<void> logoutUser() async {
+    await auth.signOut();
+    Get.offAllNamed("/authPage");
   }
 
   Future<void> initUser(String email, String name) async {
