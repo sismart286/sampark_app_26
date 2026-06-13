@@ -1,6 +1,13 @@
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sampark_app_26/Controllers/AuthController.dart';
+import 'package:sampark_app_26/Controllers/ImagePickerController.dart';
+import 'package:sampark_app_26/Controllers/ProfileController.dart';
 import 'package:sampark_app_26/Widgets/PrimaryButton.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -8,19 +15,25 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    RxBool isEdit = false.obs;
+    ProfileController profileController = Get.put(ProfileController());
+
     TextEditingController name = TextEditingController(
-      text: "Suman Singha",
-    ); //TODO: text: profileController.currentUser.value.name
+      text: profileController.currentUser.value.name,
+    );
     TextEditingController email = TextEditingController(
-      text: "suman01@gmail.com",
-    ); //TODO: text: profileController.currentUser.value.email
+      text: profileController.currentUser.value.email,
+    );
     TextEditingController phone = TextEditingController(
-      text: "602647985",
-    ); //TODO: text: profileController.currentUser.value.phoneNumber
+      text: profileController.currentUser.value.phoneNumber,
+    );
     TextEditingController about = TextEditingController(
-      text:
-          "I am Suman Singha. App Developer. Job: Flutter Frontend Developer.",
-    ); //TODO: text: profileController.currentUser.value.about
+      text: profileController.currentUser.value.about,
+    );
+    RxString imagePath = "".obs;
+    ImagePickerController imagePickerController = Get.put(
+      ImagePickerController(),
+    );
 
     AuthController authController = Get.put(AuthController());
 
@@ -55,62 +68,140 @@ class ProfilePage extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              height: 200,
-                              width: 200,
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.background,
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              child: Icon(Icons.image),
+                            Obx(
+                              () => isEdit.value
+                                  ? InkWell(
+                                      splashColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      onTap: () async {
+                                        imagePath.value =
+                                            await imagePickerController
+                                                .pickImage(ImageSource.gallery);
+
+                                        log("imagePath: ${imagePath.value}");
+                                      },
+                                      child: Container(
+                                        height: 200,
+                                        width: 200,
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.background,
+                                          borderRadius: BorderRadius.circular(
+                                            100,
+                                          ),
+                                        ),
+                                        child: imagePath.value == ""
+                                            ? Icon(Icons.add)
+                                            : ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(100),
+                                                child: Image.file(
+                                                  File(imagePath.value),
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                      ),
+                                    )
+                                  : Container(
+                                      height: 200,
+                                      width: 200,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.background,
+                                        borderRadius: BorderRadius.circular(
+                                          100,
+                                        ),
+                                      ),
+                                      child:
+                                          profileController
+                                                      .currentUser
+                                                      .value
+                                                      .profileImage ==
+                                                  null ||
+                                              profileController
+                                                      .currentUser
+                                                      .value
+                                                      .profileImage ==
+                                                  ""
+                                          ? Icon(Icons.image)
+                                          : ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                              child: CachedNetworkImage(
+                                                imageUrl: profileController
+                                                    .currentUser
+                                                    .value
+                                                    .profileImage!,
+                                                fit: BoxFit.cover,
+                                                placeholder: (context, url) =>
+                                                    CircularProgressIndicator(),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Icon(Icons.error),
+                                              ),
+                                            ),
+                                    ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 20),
-                        TextField(
-                          controller: name,
-                          decoration: InputDecoration(
-                            filled: true,
-                            labelText: "Name",
-                            prefixIcon: const Icon(
-                              Icons.person,
-                              color: Colors.white,
+                        Obx(
+                          () => TextField(
+                            controller: name,
+                            enabled: isEdit.value,
+                            decoration: InputDecoration(
+                              filled: isEdit.value,
+                              labelText: "Name",
+                              prefixIcon: const Icon(
+                                Icons.person,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
                         const SizedBox(height: 10),
-                        TextField(
-                          controller: about,
-                          decoration: InputDecoration(
-                            filled: true,
-                            labelText: "About",
-                            prefixIcon: const Icon(
-                              Icons.person,
-                              color: Colors.white,
+                        Obx(
+                          () => TextField(
+                            controller: about,
+                            enabled: isEdit.value,
+                            decoration: InputDecoration(
+                              filled: isEdit.value,
+                              labelText: "About",
+                              prefixIcon: const Icon(
+                                Icons.info,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
                         const SizedBox(height: 10),
                         TextField(
                           controller: email,
+                          enabled: false,
                           decoration: InputDecoration(
                             filled: false,
                             labelText: "Email",
                             prefixIcon: const Icon(
-                              Icons.person,
+                              Icons.alternate_email,
                               color: Colors.white,
                             ),
                           ),
                         ),
+
                         const SizedBox(height: 10),
-                        TextField(
-                          controller: phone,
-                          decoration: InputDecoration(
-                            filled: true,
-                            labelText: "Number",
-                            prefixIcon: const Icon(
-                              Icons.person,
-                              color: Colors.white,
+                        Obx(
+                          () => TextField(
+                            controller: phone,
+                            enabled: isEdit.value,
+                            decoration: InputDecoration(
+                              filled: isEdit.value,
+                              labelText: "Number",
+                              prefixIcon: const Icon(
+                                Icons.phone,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -118,10 +209,32 @@ class ProfilePage extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            PrimaryButton(
-                              btnName: "Edit",
-                              icon: Icons.edit,
-                              ontap: () {},
+                            Obx(
+                              () => isEdit.value
+                                  ? PrimaryButton(
+                                      btnName: profileController.isLoading.value
+                                          ? "Updating....."
+                                          : "Save",
+                                      icon: profileController.isLoading.value
+                                          ? Icons.update
+                                          : Icons.save,
+                                      ontap: () async {
+                                        await profileController.updateProfile(
+                                          imagePath.value,
+                                          name.text,
+                                          about.text,
+                                          phone.text,
+                                        );
+                                        isEdit.value = false;
+                                      },
+                                    )
+                                  : PrimaryButton(
+                                      btnName: "Edit",
+                                      icon: Icons.edit,
+                                      ontap: () async {
+                                        isEdit.value = true;
+                                      },
+                                    ),
                             ),
                           ],
                         ),
