@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:sampark_app_26/Config/Images.dart';
 import 'package:sampark_app_26/Config/Strings.dart';
+import 'package:sampark_app_26/Controllers/ProfileController.dart';
 import 'package:sampark_app_26/Pages/Auth/AuthPage.dart';
 import 'package:sampark_app_26/Pages/CallHistory/CallHistory.dart';
 import 'package:sampark_app_26/Pages/ContactPage/ContactPage.dart';
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     TabController tabController = TabController(length: 3, vsync: this);
+    ProfileController profileController = Get.put(ProfileController());
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
@@ -39,12 +41,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           IconButton(
             onPressed: () {
               //TODO: appController.checkLatestVersion();
-              Get.to(() => CaontactPage());
             },
             icon: Icon(Icons.search),
           ),
           IconButton(
-            onPressed: () {
+            onPressed: () async {
+              await profileController.getUserDetails();
               Get.to(() => ProfilePage());
             },
             icon: Icon(Icons.more_vert),
@@ -54,8 +56,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          //TODO: Get.toNamed("/contactPage");
-          Get.to(() => WelcomePage());
+          Get.toNamed("/contactPage");
         },
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: Icon(
@@ -63,9 +64,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           color: Theme.of(context).colorScheme.onBackground,
         ),
       ),
-      body: TabBarView(
-        controller: tabController,
-        children: [const ChatList(), const GroupPage(), const CallHistory()],
+      body: Padding(
+        padding: const EdgeInsets.all(5),
+        child: TabBarView(
+          controller: tabController,
+          children: [const ChatList(), const GroupPage(), const CallHistory()],
+        ),
       ),
     );
   }
