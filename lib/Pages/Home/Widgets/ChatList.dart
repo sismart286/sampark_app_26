@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sampark_app_26/Config/Images.dart';
+import 'package:sampark_app_26/Controllers/ContactController.dart';
+import 'package:sampark_app_26/Controllers/ProfileController.dart';
 import 'package:sampark_app_26/Pages/Chat/ChatPage.dart';
 import 'package:sampark_app_26/Pages/Home/Widgets/ChatTile.dart';
 
@@ -9,64 +11,42 @@ class ChatList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        InkWell(
-          onTap: () {
-            Get.to(() => ChatPage());
-          },
-          child: ChatTile(
-            imageUrl: AssetsImage.boyPic,
-            name: "Suman Singha",
-            lastChat: "Hi, how are you?",
-            lastTime: "Last Time",
-          ),
+    ContactController contactController = Get.put(ContactController());
+    ProfileController profileController = Get.put(ProfileController());
+    return RefreshIndicator(
+      onRefresh: () {
+        return contactController.getChatRoomList();
+      },
+      child: Obx(
+        () => ListView(
+          children: contactController.chatRoomList
+              .map(
+                (e) => InkWell(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () {
+                    Get.to(() => ChatPage());
+                  },
+                  child: ChatTile(
+                    imageUrl:
+                        (e.receiver!.id ==
+                                profileController.currentUser.value.id
+                            ? e.sender!.profileImage
+                            : e.receiver!.profileImage) ??
+                        AssetsImage.defaultProfileUrl,
+                    name:
+                        (e.receiver!.id ==
+                            profileController.currentUser.value.id
+                        ? e.sender!.name
+                        : e.receiver!.name)!,
+                    lastChat: e.lastMessage ?? "Last Message",
+                    lastTime: e.lastMeessageTimestamp ?? "Last Time",
+                  ),
+                ),
+              )
+              .toList(),
         ),
-        InkWell(
-          onTap: () {
-            Get.to(() => ChatPage());
-          },
-          child: ChatTile(
-            imageUrl: AssetsImage.boyPic,
-            name: "Suman Singha",
-            lastChat: "Hi, how are you?",
-            lastTime: "Last Time",
-          ),
-        ),
-        InkWell(
-          onTap: () {
-            Get.to(() => ChatPage());
-          },
-          child: ChatTile(
-            imageUrl: AssetsImage.boyPic,
-            name: "Suman Singha",
-            lastChat: "Hi, how are you?",
-            lastTime: "Last Time",
-          ),
-        ),
-        InkWell(
-          onTap: () {
-            Get.to(() => ChatPage());
-          },
-          child: ChatTile(
-            imageUrl: AssetsImage.boyPic,
-            name: "Suman Singha",
-            lastChat: "Hi, how are you?",
-            lastTime: "Last Time",
-          ),
-        ),
-        InkWell(
-          onTap: () {
-            Get.to(() => ChatPage());
-          },
-          child: ChatTile(
-            imageUrl: AssetsImage.boyPic,
-            name: "Suman Singha",
-            lastChat: "Hi, how are you?",
-            lastTime: "Last Time",
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
