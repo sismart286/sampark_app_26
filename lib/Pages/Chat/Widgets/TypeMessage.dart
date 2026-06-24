@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:sampark_app_26/Config/Images.dart';
+import 'package:sampark_app_26/Controllers/ChatController.dart';
+import 'package:sampark_app_26/Controllers/ImagePickerController.dart';
+import 'package:sampark_app_26/Models/UserModel.dart';
+import 'package:sampark_app_26/Widgets/ImagePickerBottomSheet.dart';
 
 class TypeMessage extends StatelessWidget {
-  const TypeMessage({super.key});
+  final UserModel userModel;
+  const TypeMessage({super.key, required this.userModel});
 
   @override
   Widget build(BuildContext context) {
+    ChatController chatController = Get.put(ChatController());
+    TextEditingController messageController = TextEditingController();
+    ImagePickerController imagePickerController = Get.put(
+      ImagePickerController(),
+    );
+    RxString message = "".obs;
     return Container(
       margin: EdgeInsets.all(10),
       padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
@@ -24,7 +36,10 @@ class TypeMessage extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: TextField(
-              onChanged: (value) {},
+              onChanged: (value) {
+                message.value = value;
+              },
+              controller: messageController,
               decoration: InputDecoration(
                 filled: false,
                 hintText: "Type message...",
@@ -32,15 +47,66 @@ class TypeMessage extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          InkWell(
-            onTap: () {},
-            child: Container(
-              width: 30,
-              height: 30,
-              child: SvgPicture.asset(AssetsImage.chatGallarySvg, width: 25),
-            ),
+
+          Obx(
+            () => chatController.selectedImagePath.value == ""
+                ? InkWell(
+                    onTap: () {
+                      ImagePickerBottomSheet(
+                        context,
+                        chatController.selectedImagePath,
+                        imagePickerController,
+                      );
+                    },
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      child: SvgPicture.asset(
+                        AssetsImage.chatGallarySvg,
+                        width: 25,
+                      ),
+                    ),
+                  )
+                : const SizedBox(),
           ),
           const SizedBox(width: 10),
+          Obx(
+            () =>
+                message.value != "" ||
+                    chatController.selectedImagePath.value != ""
+                ? InkWell(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: () {
+                      if (messageController.text.isNotEmpty ||
+                          chatController.selectedImagePath.value.isNotEmpty) {
+                        chatController.sendMessage(
+                          userModel.id!,
+                          messageController.text,
+                          userModel,
+                        );
+                        messageController.clear();
+                        message.value = "";
+                      }
+                    },
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      child: chatController.isLoading.value
+                          ? const CircularProgressIndicator()
+                          : SvgPicture.asset(
+                              AssetsImage.chatSendSvg,
+                              width: 25,
+                            ),
+                    ),
+                  )
+                : Container(
+                    width: 30,
+                    height: 30,
+                    child: SvgPicture.asset(AssetsImage.chatMicSvg, width: 25),
+                  ),
+          ),
+          //TODO: STRAT FROM HERE))))******************************************************
         ],
       ),
     );

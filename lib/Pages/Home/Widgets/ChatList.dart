@@ -25,7 +25,15 @@ class ChatList extends StatelessWidget {
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
                   onTap: () {
-                    Get.to(() => ChatPage());
+                    Get.to(
+                      () => ChatPage(
+                        userModel:
+                            (e.receiver!.id ==
+                                profileController.currentUser.value.id
+                            ? e.sender
+                            : e.receiver)!,
+                      ),
+                    );
                   },
                   child: ChatTile(
                     imageUrl:

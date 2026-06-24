@@ -40,6 +40,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         actions: [
           IconButton(
             onPressed: () {
+              // Get.to(() => UserProfilePage());
               //TODO: appController.checkLatestVersion();
             },
             icon: Icon(Icons.search),

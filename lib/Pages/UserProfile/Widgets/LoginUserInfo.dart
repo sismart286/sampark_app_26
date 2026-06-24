@@ -1,9 +1,18 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sampark_app_26/Config/Images.dart';
 
 class LoginUserInfo extends StatelessWidget {
-  const LoginUserInfo({super.key});
+  final String? profileImage;
+  final String userName;
+  final String userEmail;
+  const LoginUserInfo({
+    super.key,
+    required this.profileImage,
+    required this.userName,
+    required this.userEmail,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +35,13 @@ class LoginUserInfo extends StatelessWidget {
                       height: 150,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
-                        child: Image.asset(
-                          AssetsImage.girlPic,
+                        child: CachedNetworkImage(
+                          imageUrl: profileImage!,
                           fit: BoxFit.cover,
+                          placeholder: (context, url) =>
+                              CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
                         ),
                       ),
                     ),
@@ -39,7 +52,7 @@ class LoginUserInfo extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Milon Singha",
+                      userName,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ],
@@ -48,7 +61,7 @@ class LoginUserInfo extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "milon01@gmail.com",
+                      userEmail,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ],

@@ -70,7 +70,7 @@ class ContactPage extends StatelessWidget {
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () {
-                          Get.to(() => ChatPage());
+                          Get.to(() => ChatPage(userModel: e));
                         },
 
                         child: ChatTile(

@@ -5,12 +5,14 @@ import 'package:sampark_app_26/Pages/ContactPage/ContactPage.dart';
 import 'package:sampark_app_26/Pages/Home/HomePage.dart';
 import 'package:sampark_app_26/Pages/ProfilePage/ProfilePage.dart';
 import 'package:sampark_app_26/Pages/UserProfile/UserProfilePage.dart';
+import 'package:sampark_app_26/Pages/UserProfile/UserUpdateProfile.dart';
 
 var pagePath = [
   GetPage(name: "/authPage", page: () => AuthPage()),
   GetPage(name: "/homePage", page: () => HomePage()),
-  GetPage(name: "/chatPage", page: () => ChatPage()),
+  // GetPage(name: "/chatPage", page: () => ChatPage()),
   GetPage(name: "/profilePage", page: () => ProfilePage()),
-  GetPage(name: "/userProfilePage", page: () => UserProfilePage()),
+  // GetPage(name: "/userProfilePage", page: () => UserProfilePage()),
   GetPage(name: "/contactPage", page: () => ContactPage()),
+  GetPage(name: "/updateProfilePage", page: () => UserUpdateProfile()),
 ];
