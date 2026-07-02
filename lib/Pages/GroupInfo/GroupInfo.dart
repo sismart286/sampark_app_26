@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:sampark_app_26/Config/Images.dart';
+import 'package:sampark_app_26/Models/GroupModel.dart';
 import 'package:sampark_app_26/Pages/GroupInfo/GroupMemberInfo.dart';
 import 'package:sampark_app_26/Pages/Home/Widgets/ChatTile.dart';
 
 class GroupInfo extends StatelessWidget {
-  const GroupInfo({super.key});
+  final GroupModel groupModel;
+  const GroupInfo({super.key, required this.groupModel});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Milon Singha"),
+        title: Text(groupModel.name!),
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
         ],
@@ -19,37 +21,29 @@ class GroupInfo extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         child: ListView(
           children: [
-            GroupMemberInfo(),
+            GroupMemberInfo(
+              groupId: groupModel.id!,
+              profileImage: groupModel.profileUrl == ""
+                  ? AssetsImage.defaultProfileUrl
+                  : groupModel.profileUrl!,
+              userName: groupModel.name!,
+              userEmail: groupModel.description ?? "No Description Available",
+            ),
             const SizedBox(height: 20),
             Text("Members", style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: 10),
             Column(
-              children: [
-                ChatTile(
-                  imageUrl: AssetsImage.boyPic,
-                  name: "Suman Singha",
-                  lastChat: "How are you friends?",
-                  lastTime: "10:10 AM",
-                ),
-                ChatTile(
-                  imageUrl: AssetsImage.girlPic,
-                  name: "Milon Singha",
-                  lastChat: "How are you friends?",
-                  lastTime: "10:10 AM",
-                ),
-                ChatTile(
-                  imageUrl: AssetsImage.boyPic,
-                  name: "Aditya Singha",
-                  lastChat: "How are you friends?",
-                  lastTime: "10:10 AM",
-                ),
-                ChatTile(
-                  imageUrl: AssetsImage.boyPic,
-                  name: "Raj Singha",
-                  lastChat: "How are you friends?",
-                  lastTime: "10:10 AM",
-                ),
-              ],
+              children: groupModel.members!
+                  .map(
+                    (member) => ChatTile(
+                      imageUrl:
+                          member.profileImage ?? AssetsImage.defaultProfileUrl,
+                      name: member.name!,
+                      lastChat: member.email!,
+                      lastTime: member.role == "admin" ? "Admin" : "User",
+                    ),
+                  )
+                  .toList(),
             ),
           ],
         ),

@@ -17,6 +17,7 @@ class ContactController extends GetxController {
   void onInit() async {
     super.onInit();
     await getUserList();
+    await getChatRoomList();
   }
 
   Future<void> getUserList() async {
@@ -76,5 +77,18 @@ class ContactController extends GetxController {
         log("Error while saving contacts: $ex");
       }
     }
+  }
+
+  Stream<List<UserModel>> getContacts() {
+    return db
+        .collection("users")
+        .doc(auth.currentUser!.uid)
+        .collection("contacts")
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => UserModel.fromJson(doc.data()))
+              .toList(),
+        );
   }
 }

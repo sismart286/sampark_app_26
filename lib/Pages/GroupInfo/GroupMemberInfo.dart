@@ -1,12 +1,30 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:sampark_app_26/Config/Images.dart';
+import 'package:sampark_app_26/Controllers/GroupController.dart';
+import 'package:sampark_app_26/Controllers/ProfileController.dart';
+import 'package:sampark_app_26/Models/UserModel.dart';
 
 class GroupMemberInfo extends StatelessWidget {
-  const GroupMemberInfo({super.key});
+  final String profileImage;
+  final String userName;
+  final String userEmail;
+  final String groupId;
+  const GroupMemberInfo({
+    super.key,
+    required this.profileImage,
+    required this.userName,
+    required this.userEmail,
+    required this.groupId,
+  });
 
   @override
   Widget build(BuildContext context) {
+    ProfileController profileController = Get.put(ProfileController());
+    GroupController groupController = Get.put(GroupController());
+
     return Container(
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -26,9 +44,13 @@ class GroupMemberInfo extends StatelessWidget {
                       height: 150,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
-                        child: Image.asset(
-                          AssetsImage.boyPic,
+                        child: CachedNetworkImage(
+                          imageUrl: profileImage,
                           fit: BoxFit.cover,
+                          placeholder: (context, url) =>
+                              CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
                         ),
                       ),
                     ),
@@ -39,7 +61,7 @@ class GroupMemberInfo extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Suman Singha",
+                      userName,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ],
@@ -48,7 +70,7 @@ class GroupMemberInfo extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "suman01@gmail.com",
+                      userEmail,
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                   ],
@@ -101,7 +123,16 @@ class GroupMemberInfo extends StatelessWidget {
                       ),
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        var newMember = UserModel(
+                          email: "suman01@gmail.com",
+                          name: "Nitish",
+                          profileImage: "",
+                          role: "admin",
+                        );
+
+                        groupController.addMemberToGroup(groupId, newMember);
+                      },
                       child: Container(
                         height: 50,
                         padding: EdgeInsets.all(15),

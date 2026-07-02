@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:sampark_app_26/Config/Images.dart';
+import 'package:sampark_app_26/Controllers/GroupController.dart';
+import 'package:sampark_app_26/Controllers/ImagePickerController.dart';
+import 'package:sampark_app_26/Models/GroupModel.dart';
+import 'package:sampark_app_26/Widgets/ImagePickerBottomSheet.dart';
 
 class GroupTypeMessage extends StatelessWidget {
-  const GroupTypeMessage({super.key});
+  final GroupModel groupModel;
+  const GroupTypeMessage({super.key, required this.groupModel});
 
   @override
   Widget build(BuildContext context) {
     TextEditingController messageController = TextEditingController();
+    RxString message = "".obs;
+    ImagePickerController imagePickerController = Get.put(
+      ImagePickerController(),
+    );
+    GroupController groupController = Get.put(GroupController());
+
     return Container(
       margin: EdgeInsets.all(10),
       padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
@@ -25,7 +37,9 @@ class GroupTypeMessage extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: TextField(
-              onChanged: (value) {},
+              onChanged: (value) {
+                message.value = value;
+              },
               controller: messageController,
               decoration: InputDecoration(
                 filled: false,
@@ -34,19 +48,60 @@ class GroupTypeMessage extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          InkWell(
-            onTap: () {},
-            child: Container(
-              width: 30,
-              height: 30,
-              child: SvgPicture.asset(AssetsImage.chatGallarySvg, width: 25),
-            ),
+          Obx(
+            () => groupController.selectedImagePath.value == ""
+                ? InkWell(
+                    onTap: () {
+                      ImagePickerBottomSheet(
+                        context,
+                        groupController.selectedImagePath,
+                        imagePickerController,
+                      );
+                    },
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      child: SvgPicture.asset(
+                        AssetsImage.chatGallarySvg,
+                        width: 25,
+                      ),
+                    ),
+                  )
+                : const SizedBox(),
           ),
           const SizedBox(width: 10),
-          Container(
-            width: 30,
-            height: 30,
-            child: SvgPicture.asset(AssetsImage.chatMicSvg, width: 25),
+          Obx(
+            () =>
+                (message.value != "" ||
+                    groupController.selectedImagePath.value != "")
+                ? InkWell(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: () {
+                      groupController.sendGroupMessage(
+                        messageController.text,
+                        groupModel.id!,
+                        "",
+                      );
+                      messageController.clear();
+                      message.value = "";
+                    },
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      child: groupController.isloading.value
+                          ? const CircularProgressIndicator()
+                          : SvgPicture.asset(
+                              AssetsImage.chatSendSvg,
+                              width: 25,
+                            ),
+                    ),
+                  )
+                : Container(
+                    width: 30,
+                    height: 30,
+                    child: SvgPicture.asset(AssetsImage.chatMicSvg, width: 25),
+                  ),
           ),
         ],
       ),

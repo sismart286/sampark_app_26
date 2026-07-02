@@ -1,15 +1,26 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:sampark_app_26/Config/Images.dart';
+import 'package:sampark_app_26/Controllers/GroupController.dart';
+import 'package:sampark_app_26/Controllers/ProfileController.dart';
+import 'package:sampark_app_26/Models/GroupModel.dart';
 import 'package:sampark_app_26/Pages/Chat/Widgets/ChatBubble.dart';
 import 'package:sampark_app_26/Pages/GroupChat/GroupTypeMessage.dart';
 import 'package:sampark_app_26/Pages/GroupInfo/GroupInfo.dart';
 
 class GroupChatPage extends StatelessWidget {
-  const GroupChatPage({super.key});
+  final GroupModel groupModel;
+  const GroupChatPage({super.key, required this.groupModel});
 
   @override
   Widget build(BuildContext context) {
+    GroupController groupController = Get.put(GroupController());
+    ProfileController profileController = Get.put(ProfileController());
+
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
@@ -21,7 +32,14 @@ class GroupChatPage extends StatelessWidget {
             child: Container(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(100),
-                child: Image.asset(AssetsImage.girlPic),
+                child: CachedNetworkImage(
+                  imageUrl: groupModel.profileUrl == ""
+                      ? AssetsImage.defaultProfileUrl
+                      : groupModel.profileUrl!,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                ),
               ),
             ),
           ),
@@ -30,7 +48,7 @@ class GroupChatPage extends StatelessWidget {
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
           onTap: () {
-            Get.to(() => GroupInfo());
+            Get.to(() => GroupInfo(groupModel: groupModel));
           },
           child: Row(
             children: [
@@ -64,21 +82,88 @@ class GroupChatPage extends StatelessWidget {
             Expanded(
               child: Stack(
                 children: [
-                  ListView(
-                    children: [
-                      ChatBubble(
-                        message: "How are you mom?",
-                        isComming: true,
-                        time: "09:00 AM",
-                        status: "read",
-                        imageUrl: "",
-                      ),
-                    ],
+                  StreamBuilder(
+                    stream: groupController.getGroupMessages(groupModel.id!),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError) {
+                        return Center(child: Text("Error: ${snapshot.error}"));
+                      }
+                      if (snapshot.data == null) {
+                        return const Center(child: Text("No Messages"));
+                      } else {
+                        return ListView.builder(
+                          reverse: true,
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            DateTime timestamp = DateTime.parse(
+                              snapshot.data![index].timestamp!,
+                            );
+                            String formattedTime = DateFormat(
+                              'hh:mm a',
+                            ).format(timestamp);
+                            return ChatBubble(
+                              message: snapshot.data![index].message!,
+                              isComming:
+                                  snapshot.data![index].senderId !=
+                                  profileController.currentUser.value.id,
+                              time: formattedTime,
+                              status: "read",
+                              imageUrl: snapshot.data![index].imageUrl ?? "",
+                            );
+                          },
+                        );
+                      }
+                    },
+                  ),
+                  Obx(
+                    () => (groupController.selectedImagePath.value != "")
+                        ? Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Stack(
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 10),
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: FileImage(
+                                        File(
+                                          groupController
+                                              .selectedImagePath
+                                              .value,
+                                        ),
+                                      ),
+                                      fit: BoxFit.contain,
+                                    ),
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primaryContainer,
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  height: 500,
+                                ),
+                                Positioned(
+                                  child: IconButton(
+                                    onPressed: () {
+                                      groupController.selectedImagePath.value =
+                                          "";
+                                    },
+                                    icon: const Icon(Icons.close),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Container(),
                   ),
                 ],
               ),
             ),
-            GroupTypeMessage(),
+            GroupTypeMessage(groupModel: groupModel),
           ],
         ),
       ),
