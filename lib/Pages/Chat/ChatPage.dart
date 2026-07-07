@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sampark_app_26/Config/Images.dart';
+import 'package:sampark_app_26/Controllers/CallController.dart';
 import 'package:sampark_app_26/Controllers/ChatController.dart';
 import 'package:sampark_app_26/Controllers/ProfileController.dart';
 import 'package:sampark_app_26/Models/ChatModel.dart';
 import 'package:sampark_app_26/Models/UserModel.dart';
+import 'package:sampark_app_26/Pages/CallPage/AudioCallPage.dart';
+import 'package:sampark_app_26/Pages/CallPage/VideoCallPage.dart';
 import 'package:sampark_app_26/Pages/Chat/Widgets/ChatBubble.dart';
 import 'package:sampark_app_26/Pages/Chat/Widgets/TypeMessage.dart';
 import 'package:sampark_app_26/Pages/UserProfile/UserProfilePage.dart';
@@ -21,6 +24,8 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     ChatController chatController = Get.put(ChatController());
     ProfileController profileController = Get.put(ProfileController());
+    CallController callController = Get.put(CallController());
+
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
@@ -86,13 +91,27 @@ class ChatPage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Get.to(() => AudioCallPage(target: userModel));
+              callController.callAction(
+                userModel,
+                profileController.currentUser.value,
+                "audio",
+              );
+            },
             icon: Icon(Icons.phone),
-          ), //TODO ))))))))))))))))))
+          ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Get.to(() => VideoCallPage(target: userModel));
+              callController.callAction(
+                userModel,
+                profileController.currentUser.value,
+                "video",
+              );
+            },
             icon: Icon(Icons.video_call),
-          ), //TODO )))))))))))))))))))))))
+          ),
         ],
       ),
       body: Padding(

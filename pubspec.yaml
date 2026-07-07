@@ -46,6 +46,7 @@ dependencies:
   uuid: ^4.5.3
   intl: ^0.20.2
   fluttertoast: ^9.1.0
+  zego_uikit_prebuilt_call: ^4.24.2
 
 dev_dependencies:
   flutter_test:

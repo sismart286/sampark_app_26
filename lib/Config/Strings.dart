@@ -10,3 +10,9 @@ class WelcomePageString {
       "Perfect solution of connexct with anyone easly and more secure";
   static const slideToStart = "Slide to start now";
 }
+
+class ZegoCloudConfig {
+  static const appId = 1909870810;
+  static const appSign =
+      "709b1047acb450889d35f7b757c46d68e9ee925fa8d33344891f0037bcd654c6";
+}
