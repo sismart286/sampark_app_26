@@ -19,7 +19,7 @@ class StatusController extends GetxController with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifeCycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
     if (state == AppLifecycleState.inactive) {

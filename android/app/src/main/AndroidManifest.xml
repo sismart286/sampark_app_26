@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="sampark_app_26"
+        android:label="Sampark"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

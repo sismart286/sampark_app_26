@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:sampark_app_26/Config/Images.dart';
+import 'package:sampark_app_26/Controllers/ChatController.dart';
 import 'package:sampark_app_26/Pages/Home/Widgets/ChatTile.dart';
 
 class CallHistory extends StatelessWidget {
@@ -7,15 +10,40 @@ class CallHistory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ChatTile(
-          imageUrl: AssetsImage.girlPic,
-          name: "Milon Singha",
-          lastChat: "Call Recieved",
-          lastTime: "Just Now",
-        ),
-      ],
+    ChatController chatController = Get.put(ChatController());
+
+    return StreamBuilder(
+      stream: chatController.getCalls(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              DateTime timestamp = DateTime.parse(
+                snapshot.data![index].timestamp!,
+              );
+              String formattedTime = DateFormat("hh:mm a").format(timestamp);
+
+              return ChatTile(
+                imageUrl:
+                    snapshot.data![index].callerPic ??
+                    AssetsImage.defaultProfileUrl,
+                name: snapshot.data![index].callerName ?? "...",
+                lastChat: snapshot.data![index].type ?? "...",
+                lastTime: formattedTime,
+              );
+            },
+          );
+        } else {
+          return Center(
+            child: Container(
+              width: 200,
+              height: 200,
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+      },
     );
   }
 }

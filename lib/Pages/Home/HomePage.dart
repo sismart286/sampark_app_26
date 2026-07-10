@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:sampark_app_26/Config/Images.dart';
 import 'package:sampark_app_26/Config/Strings.dart';
+import 'package:sampark_app_26/Controllers/AppController.dart';
 import 'package:sampark_app_26/Controllers/ContactController.dart';
 import 'package:sampark_app_26/Controllers/ProfileController.dart';
 import 'package:sampark_app_26/Controllers/StatusController.dart';
@@ -30,7 +31,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     ProfileController profileController = Get.put(ProfileController());
     ContactController contactController = Get.put(ContactController());
     StatusController statusController = Get.put(StatusController());
-    //TODO: START FROM HERE)))))))))))))**************^^^^^^^^^^^^^^^^^^^^^^^^
+    AppController appController = Get.put(AppController());
 
     return Scaffold(
       appBar: AppBar(
@@ -47,7 +48,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           IconButton(
             onPressed: () {
               // Get.to(() => UserProfilePage());
-              //TODO: appController.checkLatestVersion();
+              appController.checkLatestVersion();
             },
             icon: Icon(Icons.search),
           ),
