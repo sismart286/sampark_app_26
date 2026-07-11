@@ -35,10 +35,21 @@ class AppController extends GetxController {
       final tagName = data['tag_name'];
       oldVersion.value = tagName;
       final assets = data['assets'] as List<dynamic>;
+      // for (final asset in assets) {
+      //   final assetName = asset["name"];
+      //   final assetDownloadUrl = asset["browser_download_url"];
+      //   newAppUrl.value = assetDownloadUrl;
+      //   log("App download url: $assetDownloadUrl");
+      // }
+
       for (final asset in assets) {
         final assetName = asset["name"];
-        final assetDownloadUrl = asset["browser_download_url"];
-        newAppUrl.value = assetDownloadUrl;
+
+        if (assetName.endsWith(".apk")) {
+          newAppUrl.value = asset["browser_download_url"];
+          log("APK URL: ${newAppUrl.value}");
+          break;
+        }
       }
 
       // checkUpdateSnackbar();
@@ -58,6 +69,7 @@ class AppController extends GetxController {
       message: "New Update Available",
       mainButton: TextButton(
         onPressed: () {
+          log("newAppUrl.value: ${newAppUrl.value}");
           launchUrl(
             Uri.parse(newAppUrl.value),
             mode: LaunchMode.externalApplication,
