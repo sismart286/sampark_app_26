@@ -4,12 +4,22 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppController extends GetxController {
   RxString oldVersion = "".obs;
   RxString currentVersion = "".obs;
   RxString newAppUrl = "".obs;
+
+  @override
+  void onInit() async {
+    super.onInit();
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    currentVersion.value = packageInfo.version;
+    log("CurrentVersion.value: ${currentVersion.value.toString()}");
+    checkLatestVersion();
+  }
 
   Future<void> checkLatestVersion() async {
     const repositoryOwner = 'sismart286';
